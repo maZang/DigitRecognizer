@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import sklearn.multiclass.OneVsRestClassifier as oneVsAll
 from scipy import optimize
 
 def main():
@@ -27,20 +28,20 @@ def sigmoid(X):
     return sig
 
 
-def oneVsAll(X_trainer, y, num_classes, lamda):
-    (m, n) = X_trainer.shape
-    #initialize theta to be empty
-    full_theta = np.empty(shape=[n + 1, num_classes])
-    #add column of 1's to X
-    X_trainer = np.c_[np.ones((m,1)), X_trainer]
-    for num in range(1, num_classes + 1):
-        print("Training class number " + str(num))
-        initial_theta = np.zeros((n + 1, 1))
-        y_num = find_vector(y, num)
-        args = (X_trainer, y_num, lamda, m, n)
-        print("Starting optimization...")
-        theta = optimize.fmin_cg(cost, initial_theta, fprime = grad, args = args)
-    print(full_theta)
+# def oneVsAll(X_trainer, y, num_classes, lamda):
+#     (m, n) = X_trainer.shape
+#     #initialize theta to be empty
+#     full_theta = np.empty(shape=[n + 1, num_classes])
+#     #add column of 1's to X
+#     X_trainer = np.c_[np.ones((m,1)), X_trainer]
+#     for num in range(1, num_classes + 1):
+#         print("Training class number " + str(num))
+#         initial_theta = np.zeros((n + 1, 1))
+#         y_num = find_vector(y, num)
+#         args = (X_trainer, y_num, lamda, m, n)
+#         print("Starting optimization...")
+#         theta = optimize.fmin_cg(cost, initial_theta, fprime = grad, args = args)
+#     print(full_theta)
 
 def find_vector(y, num):
     m = y.shape[0]
