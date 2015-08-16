@@ -28,8 +28,10 @@ def main():
     #create a SVM with linear kernel
 
     #variety of C tried, none made significant difference, even after overfitting training data, default constructer used
-    linearSVM = svm.LinearSVC()
-    linearSVM.fit(X_train,y)
+    #linearSVM = svm.LinearSVC()
+    otherSVM = svm.SVC(gamma=0.001)
+    #linearSVM.fit(X_train,y)
+    otherSVM.fit(X_train, y)
     endTime = time.time() - startTime
     print(("---{} seconds to create SVM---").format(endTime))
 
@@ -38,9 +40,11 @@ def main():
 
 
     #predict training set digits
-    predictions = linearSVM.predict(X_train).astype(int)
+    #predictions = linearSVM.predict(X_train).astype(int)
+    predictions2 = otherSVM.predict(X_train).astype(int)
+    
 
-    print(("Predictions: {}").format(predictions))
+    print(("Predictions: {}").format(predictions2))
     print(("Actual: {}").format(y.astype(int)))
 
 
@@ -53,7 +57,7 @@ def main():
 
     #iterate through all examples
     for index in range(y.shape[0]):
-        if y[index] == predictions[index]:
+        if y[index] == predictions2[index]:
             correct+=1
         else:
             numberOfDigitsWrong[int(y[index])]+=1
@@ -69,14 +73,17 @@ def main():
 
 
     #test predictions
-    predictTest = (linearSVM.predict(X_test)).astype(int)
-    imgid = np.zeros((predictTest.shape[0],1))
-    for n in range(0, predictTest.shape[0]):
+    #predictTest = (linearSVM.predict(X_test)).astype(int)
+    predictTest2 = otherSVM.predict(X_test)
+    imgid = np.zeros((predictTest2.shape[0],1))
+    for n in range(0, predictTest2.shape[0]):
         imgid[n] = n + 1
-    output = np.c_[imgid, predictTest]
+    #output = np.c_[imgid, predictTest]
+    output2 = np.c_[imgid, predictTest2]
 
-    np.savetxt('output.csv', output, fmt="%i", delimiter= ",", header = "ImageId,Label", comments = "")
-    return predictTest
+#np.savetxt('output.csv', output, fmt="%i", delimiter= ",", header = "ImageId,Label", comments = "")
+    np.savetxt('output2.csv', output, fmt="%i", delimiter=",", header = "ImageId,Label", comments="")
+    return predictTest, predictTest2
 
 
 if __name__ == '__main__':
