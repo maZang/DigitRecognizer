@@ -14,8 +14,8 @@ def main():
     # Read competition data files:
     train = pd.read_csv("./input/train.csv")
     test  = pd.read_csv("./input/test.csv")
-    endTime = time.time() - startTime
-    print(("---{} seconds to read data---").format(endTime))
+    duration = time.time() - startTime
+    print(("---{} seconds to read data---").format(duration))
 
     #Separate training examples from labels
     X_train =  train.values[:, 1:].astype(float)
@@ -28,23 +28,20 @@ def main():
     #create a SVM with linear kernel
 
     #variety of C tried, none made significant difference, even after overfitting training data, default constructer used
-    #linearSVM = svm.LinearSVC()
-    otherSVM = svm.SVC(gamma=0.001)
-    #linearSVM.fit(X_train,y)
-    otherSVM.fit(X_train, y)
-    endTime = time.time() - startTime
-    print(("---{} seconds to create SVM---").format(endTime))
+    linearSVM = svm.LinearSVC()
+    linearSVM.fit(X_train,y)
+    duration = time.time() - startTime
+    print(("---{} seconds to create SVM---").format(duration))
 
     #Test data
     X_test = test.values.astype(float)
 
 
     #predict training set digits
-    #predictions = linearSVM.predict(X_train).astype(int)
-    predictions2 = otherSVM.predict(X_train).astype(int)
+    predictions = linearSVM.predict(X_train).astype(int)
     
 
-    print(("Predictions: {}").format(predictions2))
+    print(("Predictions: {}").format(predictions))
     print(("Actual: {}").format(y.astype(int)))
 
 
@@ -57,7 +54,7 @@ def main():
 
     #iterate through all examples
     for index in range(y.shape[0]):
-        if y[index] == predictions2[index]:
+        if y[index] == predictions[index]:
             correct+=1
         else:
             numberOfDigitsWrong[int(y[index])]+=1
@@ -70,20 +67,20 @@ def main():
 
 
 
-
+    startTime = time.time() 
 
     #test predictions
-    #predictTest = (linearSVM.predict(X_test)).astype(int)
-    predictTest2 = otherSVM.predict(X_test)
-    imgid = np.zeros((predictTest2.shape[0],1))
-    for n in range(0, predictTest2.shape[0]):
-        imgid[n] = n + 1
-    #output = np.c_[imgid, predictTest]
-    output2 = np.c_[imgid, predictTest2]
+    predictTest = (linearSVM.predict(X_test)).astype(int)
+    duration = time.time() - startTime
+    print(("---{} seconds to predict using SVM with linear kernel---").format(duration))
 
-#np.savetxt('output.csv', output, fmt="%i", delimiter= ",", header = "ImageId,Label", comments = "")
-    np.savetxt('output2.csv', output, fmt="%i", delimiter=",", header = "ImageId,Label", comments="")
-    return predictTest, predictTest2
+    imgid = np.zeros((predictTest.shape[0],1))
+    for n in range(0, predictTest.shape[0]):
+        imgid[n] = n + 1
+    output = np.c_[imgid, predictTest]
+
+    np.savetxt('output.csv', output, fmt="%i", delimiter= ",", header = "ImageId,Label", comments = "")
+    return predictTest
 
 
 if __name__ == '__main__':
